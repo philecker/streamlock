@@ -1,0 +1,67 @@
+{
+  "name": "streamlock",
+  "productName": "StreamLock",
+  "version": "0.1.0",
+  "description": "Menu bar app that keeps one PIN in sync across your streaming services.",
+  "private": true,
+  "main": "out/main/index.js",
+  "author": "StreamLock",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "icons": "python3 scripts/make_tray_icons.py && python3 scripts/make_app_icon.py",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "preview:web": "vite build --config preview/vite.config.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "22.10.1",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.4",
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8",
+    "electron-vite": "2.3.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "typescript": "5.6.3",
+    "vite": "5.4.11",
+    "vitest": "2.1.8"
+  },
+  "build": {
+    "appId": "app.streamlock.mac",
+    "productName": "StreamLock",
+    "files": [
+      "out/**/*",
+      "resources/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": [
+          "tray*.png"
+        ]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg"
+      ],
+      "hardenedRuntime": true,
+      "extendInfo": {
+        "LSUIElement": true
+      },
+      "icon": "build/icon.png"
+    },
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    }
+  }
+}

@@ -1,0 +1,160 @@
+/* Preview shell around the real app screens.
+   Layout: a control bar on top, then the three surfaces of the app side by side
+   (menu bar popover, settings window, service window), stacking on phones.
+   The app panels stay dark, as the app is; only the shell follows the theme. */
+:root {
+  --pv-bg: #e9ebef;
+  --pv-surface: #f7f8fa;
+  --pv-fg: #1d2129;
+  --pv-muted: #596170;
+  --pv-line: #cfd4dc;
+  --pv-accent: #8a5a0b;
+  --pv-accent-fill: #f2b84b;
+  --pv-accent-ink: #1c1c1e;
+  --pv-menubar-bg: rgba(246, 246, 248, 0.92);
+  --pv-menubar-fg: #1d2129;
+  --pv-shadow: 0 18px 44px rgba(20, 24, 32, 0.22);
+  --pv-toast-bg: rgba(250, 250, 252, 0.97);
+  --pv-toast-fg: #1d2129;
+  --pv-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  --pv-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --pv-bg: #121418;
+    --pv-surface: #1a1d22;
+    --pv-fg: #eceef2;
+    --pv-muted: #a3a9b5;
+    --pv-line: #2c3038;
+    --pv-accent: #f2b84b;
+    --pv-accent-fill: #f2b84b;
+    --pv-accent-ink: #1c1c1e;
+    --pv-menubar-bg: rgba(30, 32, 38, 0.92);
+    --pv-menubar-fg: #eceef2;
+    --pv-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    --pv-toast-bg: rgba(44, 46, 52, 0.97);
+    --pv-toast-fg: #eceef2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --pv-bg: #121418;
+  --pv-surface: #1a1d22;
+  --pv-fg: #eceef2;
+  --pv-muted: #a3a9b5;
+  --pv-line: #2c3038;
+  --pv-accent: #f2b84b;
+  --pv-accent-fill: #f2b84b;
+  --pv-accent-ink: #1c1c1e;
+  --pv-menubar-bg: rgba(30, 32, 38, 0.92);
+  --pv-menubar-fg: #eceef2;
+  --pv-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  --pv-toast-bg: rgba(44, 46, 52, 0.97);
+  --pv-toast-fg: #eceef2;
+  color-scheme: dark;
+}
+
+/* Undo the app's full-window sizing; the preview is a scrolling page. */
+html, body { height: auto; min-height: 100%; }
+body {
+  background: var(--pv-bg);
+  color: var(--pv-fg);
+  font-family: var(--pv-body);
+  user-select: auto;
+}
+
+.pv-page {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+  max-width: 1480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.pv-head { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: flex-end; justify-content: space-between; }
+.pv-head > div:first-child { min-width: 0; flex: 1 1 320px; }
+.pv-title { font-family: var(--pv-display); font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.pv-lede { color: var(--pv-muted); font-size: 14px; max-width: 62ch; margin-top: 6px; }
+
+.pv-controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.pv-clock { font-size: 13px; color: var(--pv-muted); font-variant-numeric: tabular-nums; }
+.pv-clock strong { color: var(--pv-fg); }
+.pv-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.pv-btn {
+  height: 34px; padding: 0 14px; border-radius: 8px; font: 500 13px/1 var(--pv-body);
+  background: var(--pv-surface); color: var(--pv-fg); border: 1px solid var(--pv-line);
+}
+.pv-btn:hover:not(:disabled) { border-color: var(--pv-muted); }
+.pv-btn-main { background: var(--pv-accent-fill); color: var(--pv-accent-ink); border-color: transparent; font-weight: 600; }
+
+.pv-stage { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+.pv-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; max-width: 100%; }
+.pv-col-pop { flex: 0 1 380px; }
+.pv-col-set { flex: 0 1 560px; }
+.pv-col-side { flex: 1 1 280px; }
+.pv-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pv-muted); }
+
+.pv-menubar {
+  width: 100%; height: 28px; border-radius: 8px; padding: 0 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--pv-menubar-bg); color: var(--pv-menubar-fg); font-size: 12px;
+  border: 1px solid var(--pv-line);
+}
+.pv-menubar-app { font-weight: 600; }
+.pv-menubar-right { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.pv-menubar-clock { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.pv-tray { display: grid; place-items: center; width: 28px; height: 22px; border-radius: 5px; background: color-mix(in srgb, var(--pv-menubar-fg) 14%, transparent); }
+
+.pv-frame {
+  color-scheme: dark; /* the app itself is dark */
+  max-width: 100%;
+  border-radius: 14px; overflow: hidden; box-shadow: var(--pv-shadow);
+  border: 1px solid #3a3a3c; background: #1c1c1e; color: #f5f5f7;
+}
+.pv-popover { width: 100%; height: 660px; }
+.pv-settings { width: 100%; height: 700px; transition: outline-color 0.3s; outline: 3px solid transparent; outline-offset: 3px; }
+.pv-settings.pv-flash { outline-color: var(--pv-accent-fill); }
+.pv-empty { height: 100%; display: grid; place-items: center; padding: 24px; color: #aeaeb2; text-align: center; }
+
+.pv-svcwin {
+  border-radius: 12px; border: 1px solid var(--pv-line); background: var(--pv-surface);
+  box-shadow: var(--pv-shadow); overflow: hidden; max-width: 520px;
+}
+.pv-svcwin-idle { box-shadow: none; padding: 18px; color: var(--pv-muted); border-style: dashed; background: transparent; }
+.pv-svcwin-bar { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--pv-line); }
+.pv-dots { display: flex; gap: 6px; }
+.pv-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--pv-line); }
+.pv-svcwin-title { font-weight: 600; font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pv-svcwin-url {
+  margin: 10px 12px 0; padding: 6px 10px; border-radius: 6px; background: var(--pv-bg); color: var(--pv-muted);
+  font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere;
+}
+.pv-svcwin-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.5; }
+.pv-svcwin-body ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.pv-svcwin-body .pv-btn { align-self: flex-start; }
+.pv-note { color: var(--pv-accent); font-size: 12px; }
+
+.pv-toasts {
+  position: fixed; z-index: 20; display: flex; flex-direction: column; gap: 8px; width: min(340px, calc(100vw - 32px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: max(16px, env(safe-area-inset-right, 0px));
+}
+.pv-toast {
+  display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 14px;
+  background: var(--pv-toast-bg); color: var(--pv-toast-fg); box-shadow: var(--pv-shadow); font-size: 13px;
+  border: 1px solid var(--pv-line); animation: pv-in 0.25s ease-out;
+}
+.pv-toast-icon { width: 28px; height: 28px; flex: none; border-radius: 7px; display: grid; place-items: center; background: #1c1c1e; color: #f2b84b; }
+.pv-toast-body { display: block; color: var(--pv-muted); margin-top: 2px; }
+@keyframes pv-in { from { transform: translateY(6px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .pv-toast { animation: none; }
+  .pv-settings { transition: none; }
+}
+@media (max-width: 640px) {
+  .pv-popover { height: 620px; }
+  .pv-settings { height: 640px; }
+}

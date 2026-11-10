@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": { "@shared/*": ["src/shared/*"] }
+  },
+  "include": ["src/main/**/*", "src/preload/**/*", "src/shared/**/*", "src/renderer/src/format.ts", "tests/**/*", "electron.vite.config.ts", "vitest.config.ts"]
+}
